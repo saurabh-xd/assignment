@@ -17,7 +17,7 @@
     "typescript": "^5.9.2"
   },
   "dependencies": {
-    "@ai-sdk/openai": "^3.0.26",
+    "@ai-sdk/groq": "^3.0.22",
     "@hono/node-server": "^1.19.9",
     "ai": "^6.0.78",
     "hono": "^4.11.9"
