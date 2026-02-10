@@ -21,9 +21,13 @@ export async function handleMessage(
     });
   }
 
+
   if (!conversation) {
     throw new Error("Conversation not found");
   }
+
+
+
 
   // save user message
   await prisma.message.create({
@@ -34,17 +38,23 @@ export async function handleMessage(
     },
   });
 
+    // get conversation history
+const history = await prisma.message.findMany({
+  where: { conversationId: conversation.id },
+  orderBy: { createdAt: "asc" },
+});
+
   // route intent
   const intent = await routerAgent(message);
 
   let reply = "";
 
   if (intent === "order") {
-    reply = await orderAgent(message);
+    reply = await orderAgent(message, history);
   } else if (intent === "billing") {
-    reply = await billingAgent(message);
+    reply = await billingAgent(message, history);
   } else {
-    reply = await supportAgent(message);
+    reply = await supportAgent(message, history);
   }
 
   // save AI reply
@@ -52,8 +62,7 @@ export async function handleMessage(
     data: {
       conversationId: conversation.id,
       role: "assistant",
-      content: reply,
-    },
+      content: reply, },
   });
 
   return {

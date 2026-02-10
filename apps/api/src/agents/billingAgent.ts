@@ -2,8 +2,8 @@ import { generateText } from "ai";
 import { groq } from "@ai-sdk/groq";
 import { getInvoiceDetails } from "../tools/getInvoice.js";
 
-export async function billingAgent(message: string) {
-  // extract invoice like INV-001
+export async function billingAgent(message: string, history: any[]) {
+  // extract invoice number
   const match = message.match(/INV-\d+/i);
   const invoiceNo = match ? match[0].toUpperCase() : null;
 
@@ -13,17 +13,28 @@ export async function billingAgent(message: string) {
     invoiceInfo = await getInvoiceDetails(invoiceNo);
   }
 
+  // conversation history
+  const historyText = history
+    .map((m) => `${m.role}: ${m.content}`)
+    .join("\n");
+
   const res = await generateText({
     model: groq("llama-3.1-8b-instant"),
     prompt: `
-You are a billing support agent.
+You are a BILLING SUPPORT AGENT.
 
-User message: ${message}
+Conversation so far:
+${historyText}
+
+New user message:
+${message}
 
 Invoice info from database:
 ${invoiceInfo}
 
-Respond helpfully.
+Instructions:
+- Use conversation context
+- Help user with billing/refund/payment issues
 `
   });
 
