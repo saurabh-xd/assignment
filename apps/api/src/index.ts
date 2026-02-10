@@ -15,6 +15,11 @@ app.use("*", cors({
   allowHeaders: ["Content-Type"],
 }));
 
+app.onError((err, c) => {
+  console.error("SERVER ERROR:", err);
+  return c.json({ error: "Internal Server Error" }, 500);
+});
+
 
 app.get("/", (c) => c.text("API running"));
 app.get("/health", (c) => c.json({ status: "ok" }));
@@ -22,6 +27,7 @@ app.get("/health", (c) => c.json({ status: "ok" }));
 
 app.route("/api/chat", chat);
 app.route("/api/agents", agents);
+
 
 serve({
   fetch: app.fetch,
