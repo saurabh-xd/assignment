@@ -32,3 +32,21 @@ chat.get("/conversations/:id", async (c) => {
 
   return c.json(messages);
 });
+
+chat.get("/conversations", async (c) => {
+  const conversations = await prisma.conversation.findMany({
+    orderBy: { createdAt: "desc" },
+  });
+
+  return c.json(conversations);
+});
+
+chat.delete("/conversations/:id", async (c) => {
+  const id = c.req.param("id");
+
+  await prisma.conversation.delete({
+    where: { id },
+  });
+
+  return c.json({ success: true });
+});
