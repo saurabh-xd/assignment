@@ -1,21 +1,62 @@
-import { prisma } from "../src";
+import "dotenv/config";
+import { PrismaClient } from "../generated/prisma/client";
+import { PrismaPg } from '@prisma/adapter-pg';
+
+console.log("DATABASE_URL:", process.env.DATABASE_URL);
+
+
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL,
+});
+
+const prisma = new PrismaClient({
+    adapter,
+  });
 
 async function main() {
-  await prisma.order.createMany({
-    data: [
-      { orderNo: "ORD-001", status: "shipped", amount: 120 },
-      { orderNo: "ORD-002", status: "processing", amount: 80 }
-    ]
+  console.log("Seeding database...");
+
+  // clear old data
+  await prisma.order.deleteMany();
+  await prisma.invoice.deleteMany();
+
+  // ORDERS
+  await prisma.order.create({
+    data: {
+      orderNo: "ORD-001",
+      status: "shipped",
+      amount: 999,
+    },
   });
 
-  await prisma.invoice.createMany({
-    data: [
-      { invoiceNo: "INV-001", amount: 120, status: "paid" },
-      { invoiceNo: "INV-002", amount: 80, status: "pending" }
-    ]
+  await prisma.order.create({
+    data: {
+      orderNo: "ORD-002",
+      status: "processing",
+      amount: 499,
+    },
   });
 
-  console.log("Seeded DB");
+  // INVOICES
+  await prisma.invoice.create({
+    data: {
+      invoiceNo: "INV-001",
+      amount: 999,
+      status: "paid",
+    },
+  });
+
+  await prisma.invoice.create({
+    data: {
+      invoiceNo: "INV-002",
+      amount: 499,
+      status: "pending",
+    },
+  });
+
+  console.log("Seed complete");
 }
 
-main();
+main()
+  .catch((e) => console.error(e))
+  .finally(() => prisma.$disconnect());
