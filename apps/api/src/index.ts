@@ -4,6 +4,8 @@ import { serve } from "@hono/node-server";
 import chat from "./routes/chat.js";
 import { cors } from "hono/cors";
 import agents from "./routes/agents.js";
+import { errorMiddleware } from "./middleware/error.js";
+
 
 
 
@@ -14,11 +16,8 @@ app.use("*", cors({
   allowMethods: ["GET", "POST", "DELETE"],
   allowHeaders: ["Content-Type"],
 }));
+app.use("*", errorMiddleware);
 
-app.onError((err, c) => {
-  console.error("SERVER ERROR:", err);
-  return c.json({ error: "Internal Server Error" }, 500);
-});
 
 
 app.get("/", (c) => c.text("API running"));
@@ -33,3 +32,6 @@ serve({
   fetch: app.fetch,
   port: 3001,
 });
+
+export type AppType = typeof app;
+export default app;
