@@ -16,6 +16,7 @@ app.use("*", cors({
   allowMethods: ["GET", "POST", "DELETE"],
   allowHeaders: ["Content-Type"],
 }));
+
 app.use("*", errorMiddleware);
 
 

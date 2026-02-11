@@ -2,7 +2,6 @@ import "dotenv/config";
 import { PrismaClient } from "../generated/prisma/client";
 import { PrismaPg } from '@prisma/adapter-pg';
 
-console.log("DATABASE_URL:", process.env.DATABASE_URL);
 
 
 const adapter = new PrismaPg({
@@ -16,11 +15,11 @@ const prisma = new PrismaClient({
 async function main() {
   console.log("Seeding database...");
 
-  // clear old data
+ 
   await prisma.order.deleteMany();
   await prisma.invoice.deleteMany();
 
-  // ORDERS
+ 
   await prisma.order.create({
     data: {
       orderNo: "ORD-001",
@@ -37,7 +36,7 @@ async function main() {
     },
   });
 
-  // INVOICES
+  
   await prisma.invoice.create({
     data: {
       invoiceNo: "INV-001",

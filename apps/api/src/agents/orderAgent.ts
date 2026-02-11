@@ -3,7 +3,7 @@ import { groq } from "@ai-sdk/groq";
 import { getOrderDetails } from "../tools/getOrder.js";
 
 export async function orderAgent(message: string, history: any[]) {
-  // Try to extract order number like ORD-001
+ 
   const match = message.match(/ORD-\d+/i);
   const orderNo = match ? match[0].toUpperCase() : null;
 

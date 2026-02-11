@@ -3,7 +3,7 @@ import { groq } from "@ai-sdk/groq";
 import { getInvoiceDetails } from "../tools/getInvoice.js";
 
 export async function billingAgent(message: string, history: any[]) {
-  // extract invoice number
+ 
   const match = message.match(/INV-\d+/i);
   const invoiceNo = match ? match[0].toUpperCase() : null;
 

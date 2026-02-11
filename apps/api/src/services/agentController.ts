@@ -4,11 +4,7 @@ import { orderAgent } from "../agents/orderAgent.js";
 import { billingAgent } from "../agents/billingAgent.js";
 import { supportAgent } from "../agents/supportAgent.js";
 
-export async function handleMessage(
-  message: string,
-  conversationId?: string
-) {
-  // create conversation if not provided
+export async function handleMessage(message: string, conversationId?: string) {
   let conversation;
 
   if (!conversationId) {
@@ -21,15 +17,10 @@ export async function handleMessage(
     });
   }
 
-
   if (!conversation) {
     throw new Error("Conversation not found");
   }
 
-
-
-
-  // save user message
   await prisma.message.create({
     data: {
       conversationId: conversation.id,
@@ -38,13 +29,11 @@ export async function handleMessage(
     },
   });
 
-    // get conversation history
-const history = await prisma.message.findMany({
-  where: { conversationId: conversation.id },
-  orderBy: { createdAt: "asc" },
-});
+  const history = await prisma.message.findMany({
+    where: { conversationId: conversation.id },
+    orderBy: { createdAt: "asc" },
+  });
 
-  // route intent
   const intent = await routerAgent(message);
 
   let reply = "";
@@ -57,12 +46,12 @@ const history = await prisma.message.findMany({
     reply = await supportAgent(message, history);
   }
 
-  // save AI reply
   await prisma.message.create({
     data: {
       conversationId: conversation.id,
       role: "assistant",
-      content: reply, },
+      content: reply,
+    },
   });
 
   return {

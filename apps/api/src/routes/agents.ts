@@ -2,7 +2,7 @@ import { Hono } from "hono";
 
 const agents = new Hono();
 
-// list all agents
+
 agents.get("/", (c) => {
   return c.json([
     {
@@ -23,13 +23,14 @@ agents.get("/", (c) => {
   ]);
 });
 
-// single agent capabilities
-agents.get("/:type", (c) => {
+
+agents.get("/:type/capabilities", (c) => {
   const type = c.req.param("type");
 
   if (type === "order") {
     return c.json({
       agent: "order",
+      capabilities: "Order tracking, modifications, cancellations",
       tools: ["getOrderDetails"],
     });
   }
@@ -37,6 +38,7 @@ agents.get("/:type", (c) => {
   if (type === "billing") {
     return c.json({
       agent: "billing",
+      capabilities: "Invoices, refunds, payments",
       tools: ["getInvoiceDetails"],
     });
   }
@@ -44,6 +46,7 @@ agents.get("/:type", (c) => {
   if (type === "support") {
     return c.json({
       agent: "support",
+      capabilities: "General support inquiries, FAQs, troubleshooting",
       tools: ["getConversationHistory"],
     });
   }
