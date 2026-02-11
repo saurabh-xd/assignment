@@ -1,135 +1,164 @@
-# Turborepo starter
+# 🧠 AI Customer Support System (Multi-Agent)
 
-This Turborepo starter is maintained by the Turborepo core team.
+Fullstack AI-powered customer support system with multi-agent architecture.
 
-## Using this example
+**Stack:** Turborepo + Hono + Prisma + Next.js + Vercel AI SDK
 
-Run the following command:
+---
 
-```sh
-npx create-turbo@latest
-```
-
-## What's inside?
-
-This Turborepo includes the following packages/apps:
-
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
+## 🚀 Architecture
 
 ```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+User → Next.js Frontend
+     → Hono API
+     → Router Agent
+        ├─ Order Agent (order status, tracking)
+        ├─ Billing Agent (invoices, refunds)
+        └─ Support Agent (FAQs, help)
+     → Tools (DB queries)
+     → PostgreSQL
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+---
+
+## 🧱 Tech Stack
+
+| Layer | Tech |
+|-------|------|
+| **Frontend** | Next.js, TailwindCSS |
+| **Backend** | Hono, Node.js |
+| **Database** | PostgreSQL (Neon), Prisma ORM |
+| **AI** | Vercel AI SDK, Groq |
+| **Monorepo** | Turborepo |
+
+---
+
+## 📁 Project Structure
 
 ```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+apps/
+ ├─ api/      # Backend (Hono server)
+ └─ web/      # Frontend (Next.js)
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
+packages/
+ └─ db/       # Prisma + Database client
 ```
 
-### Develop
+---
 
-To develop all apps and packages, run the following command:
+## 🤖 Multi-Agent System
 
+### Router Agent
+Analyzes user intent and delegates to specialist agents.
+
+### Sub-Agents
+
+| Agent | Handles | Tools |
+|-------|---------|-------|
+| **Order** | Order status, tracking, cancellations | `getOrderDetails()` |
+| **Billing** | Invoices, refunds, payments | `getInvoiceDetails()` |
+| **Support** | FAQs, general support | `getConversationHistory()` |
+
+---
+
+## 🗃️ Database Schema
+
+- `Conversation` - Chat sessions
+- `Message` - Chat messages with agent context
+- `Order` - Customer orders
+- `Invoice` - Billing invoices
+
+---
+
+## 🛣️ API Routes
+
+### Chat
 ```
-cd my-turborepo
+POST   /api/chat/messages
+GET    /api/chat/conversations
+GET    /api/chat/conversations/:id
+DELETE /api/chat/conversations/:id
+```
 
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
+### Agents
+```
+GET /api/agents
+GET /api/agents/:type/capabilities
+```
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
+### Health
+```
+GET /api/health
+```
+
+---
+
+## ⚙️ Setup
+
+### 1. Install Dependencies
+```bash
+npm install
+```
+
+### 2. Environment Variables
+
+**`apps/api/.env`**
+```env
+DATABASE_URL=your_postgres_url
+GROQ_API_KEY=your_groq_key
+```
+
+**`packages/db/.env`**
+```env
+DATABASE_URL=your_postgres_url
+```
+
+### 3. Database Setup
+```bash
+cd packages/db
+npx prisma migrate dev
+npx tsx prisma/seed.ts
+```
+
+### 4. Run Development Server
+```bash
+npm run dev
+# or
 npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
 ```
 
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+- **Frontend:** http://localhost:3000
+- **API:** http://localhost:3001
+
+---
+
+## 🧪 Example Queries
 
 ```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
+"Where is my order ORD-001?"
+→ Routes to Order Agent → Fetches order from DB
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
+"I need invoice INV-001"
+→ Routes to Billing Agent → Retrieves invoice
+
+"How do I reset my password?"
+→ Routes to Support Agent → Searches knowledge base
 ```
 
-### Remote Caching
+---
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+## ✅ Features
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+- ✅ Multi-agent routing system
+- ✅ AI-powered intent classification
+- ✅ Database-backed tools
+- ✅ Conversation memory & context
+- ✅ Controller-Service pattern
+- ✅ Global error handling middleware
+- ✅ Type-safe Hono RPC (Turborepo)
+- ✅ Seeded test data
+- ✅ REST API with proper validation
+- ✅ Modern chat UI with TailwindCSS
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
 
-```
-cd my-turborepo
 
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
